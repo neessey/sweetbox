@@ -1,0 +1,6 @@
+{
+  "name": "Sweet box - Le bonheur tient dans une boîte",
+  "description": "Expérience gastronomique et boutique immersive Sweet box : crêpes, gaufres et boxe sur-mesure livrées avec amour.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
