@@ -112,10 +112,10 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-12 border-b"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b"
              style={{ borderColor: isDarkMode ? `${palette.cream}08` : `${palette.chocolate}08` }}>
           
-          {/* Brand Column */}
+          {/* Brand Column - 4 colonnes */}
           <div className="lg:col-span-4 space-y-5">
             <SweetBoxLogo variant="full" size="md" isDarkMode={isDarkMode} />
             
@@ -150,8 +150,25 @@ export const Footer: React.FC<FooterProps> = ({
               })}
             </div>
 
+            {/* Awards - Déplacé ici pour mieux organiser */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              {awards.map((award, index) => {
+                const Icon = award.icon;
+                return (
+                  <div key={index} className="flex items-center gap-1.5">
+                    <Icon className="w-3.5 h-3.5" style={{ color: palette.gold }} />
+                    <span className="text-[10px] font-medium uppercase tracking-wider opacity-60">
+                      {award.label}
+                    </span>
+                    {index < awards.length - 1 && (
+                      <span className="w-px h-3 bg-current opacity-20 ml-1" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
- {/* Newsletter */}
+ {/* Newsletter - Bien placé ici */}
             <div className="pt-2">
               <p className="text-xs font-medium uppercase tracking-wider mb-2 opacity-60">
                 Restez informé
@@ -175,7 +192,7 @@ export const Footer: React.FC<FooterProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-colors flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
                   style={{ backgroundColor: palette.gold }}
                 >
                   {subscribed ? (
@@ -198,7 +215,7 @@ export const Footer: React.FC<FooterProps> = ({
                 </motion.p>
               )}
             </div>
-          {/* Quick Links */}
+          {/* Quick Links - 2 colonnes sur mobile, 3 sur desktop */}
           <div className="lg:col-span-3 space-y-4">
             <h4 className="text-sm font-bold uppercase tracking-wider"
                 style={{ fontFamily: "'Fraunces', Georgia, serif", color: palette.gold }}>
@@ -217,11 +234,13 @@ export const Footer: React.FC<FooterProps> = ({
                   </button>
                 </li>
               ))}
+             
             </ul>
           </div>
 
-          {/* Contact & Newsletter */}
+          {/* Contact & Newsletter - 5 colonnes */}
           <div className="lg:col-span-5 space-y-6">
+            {/* Contact */}
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wider mb-4"
                   style={{ fontFamily: "'Fraunces', Georgia, serif", color: palette.gold }}>
@@ -268,7 +287,7 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4 text-xs opacity-60">
-            <span>© {new Date().getFullYear()} Sweet box. Tous droits réservés.</span>
+            <span>© {new Date().getFullYear()} Sweet Box. Tous droits réservés.</span>
             <span className="hidden sm:inline text-[8px]">|</span>
           </div>
 

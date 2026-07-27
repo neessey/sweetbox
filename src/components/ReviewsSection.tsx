@@ -25,42 +25,31 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ isDarkMode }) =>
   const [likedReviews, setLikedReviews] = useState<Record<number, boolean>>({});
 
   const reviews = [
-    {
-      id: 0,
-      name: 'Sophie L.',
-      rating: 5,
-      date: 'Hier',
-      comment: 'Franchement incroyable ! La boîte est arrivée bien chaude, le ruban doré fait tellement classe. La crêpe au Bueno était une dinguerie absolue !',
-      product: 'Sweet box Duo',
-      location: 'Abidjan, Cocody',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
-      likes: 24,
-      verified: true,
-    },
-    {
-      id: 1,
-      name: 'Anis M.',
-      rating: 5,
-      date: 'Il y a 3 jours',
-      comment: 'On a pris la box Family pour une soirée entre potes, tout le monde était sous le charme. Le chocolat est vraiment de qualité supérieure !',
-      product: 'Sweet box Family',
-      location: 'Abidjan, Plateau',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-      likes: 18,
-      verified: true,
-    },
-    {
-      id: 2,
-      name: 'Clara & Thomas',
-      rating: 5,
-      date: 'La semaine dernière',
-      comment: 'Le concept de la boîte avec le cœur et le cupcake sur le logo qu\'on retrouve à l\'ouverture... Bref, le slogan dit vrai : le bonheur tient dans une boîte !',
-      product: 'Crêpe Pistache Royale',
-      location: 'Abidjan, Marcory',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-      likes: 31,
-      verified: true,
-    },
+  {
+  id: 0,
+  name: 'David L.',
+  rating: 5,
+  date: 'Hier',
+  comment: 'Franchement incroyable ! Les crêpes Kinder était juste une tuerie, bien garnie avec un goût de chocolat qui fond en bouche. Je recommande à 100% !',
+  product: 'Crêpe Kinder Chocolat',
+  location: 'Abidjan, Cocody',
+  avatar: '/assets/david.jpg',
+  likes: 24,
+  verified: true,
+},
+{
+  id: 1,
+  name: 'Soraya M.',
+  rating: 5,
+  date: 'Il y a 3 jours',
+  comment: 'Les crêpes Oreo Chocolat était incroyable ! Le mélange du chocolat fondant avec les morceaux d’Oreo donne un résultat vraiment gourmand. Une vraie pépite !',
+  product: 'Crêpe Oreo Chocolat',
+  location: 'Abidjan, Plateau',
+  avatar: '/assets/soraya.jpg',
+  likes: 18,
+  verified: true,
+},
+
   ];
 
   const stats = [
