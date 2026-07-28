@@ -105,33 +105,6 @@ export const Hero: React.FC<HeroProps> = ({ isDarkMode, onNavigateSection }) => 
               nos crêpes sucrées ou salées sont composées d'ingrédients soigneusement sélectionnés.
             </motion.p>
 
-            {/* Stats/Features */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap gap-6 pt-2"
-            >
-              {[
-                { icon: Sparkles, label: 'Préparation à la commande' },
-                { icon: Leaf, label: 'Ingrédients frais' },
-                { icon: Clock, label: 'Livraison Yango' },
-              ].map(({ icon: Icon, label }, index) => (
-                <div key={index} className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4" style={{ color: gold }} />
-                  <span
-                    className="text-xs uppercase tracking-wide"
-                    style={{ ...bodyFont, color: inkSoft }}
-                  >
-                    {label}
-                  </span>
-                  {index < 2 && (
-                    <span className="w-px h-6 ml-2" style={{ backgroundColor: `${gold}30` }} />
-                  )}
-                </div>
-              ))}
-            </motion.div>
-
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -172,11 +145,13 @@ export const Hero: React.FC<HeroProps> = ({ isDarkMode, onNavigateSection }) => 
               style={{ borderColor: `${gold}20` }}
             >
               <div className="flex -space-x-2">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2"
-                    style={{ borderColor: bg, backgroundColor: palette.goldLight }}
+                {['/assets/soraya.jpg', '/assets/david.jpg'].map((src, idx) => (
+                  <img
+                    key={idx}
+                    src={src}
+                    alt={`Photo client ${idx + 1}`}
+                    className="w-8 h-8 rounded-full border-2 object-cover"
+                    style={{ borderColor: bg }}
                   />
                 ))}
               </div>

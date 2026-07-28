@@ -29,18 +29,7 @@ export const MENU_ITEMS: MenuItem[] = [
     ingredients: ['Éclats d’Oreo', 'Chocolat fondant'],
     customizable: true,
   },
-  {
-    id: 'milo-oreo',
-    name: 'Milo Oreo',
-    category: 'crepes_sucrees',
-    price: 3000,
-    description: 'Le mariage irrésistible de la poudre Milo chocolatée et des brisures d’Oreo croustillantes.',
-    image: '/assets/milo.png',
-    popular: true,
-    prepTimeMinutes: 10,
-    ingredients: ['Chocolat Milo', 'Éclats Oreo', 'Nappage chocolat'],
-    customizable: true,
-  },
+
   {
     id: 'crepe-nature',
     name: 'Crêpes Nature',
