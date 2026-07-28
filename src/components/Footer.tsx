@@ -57,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({
     { 
       icon: MessageCircle, 
       label: 'WhatsApp', 
-      href: 'https://wa.me/594375827',
+      href: 'https://wa.me/0594375827',
       color: 'from-green-500 to-emerald-600'
     },
     { 

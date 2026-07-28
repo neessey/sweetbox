@@ -18,6 +18,9 @@ interface OrderPackagingModalProps {
 }
 
 type ModalStep = 'form' | 'payment' | 'anim' | 'recap';
+// 'redirected' = on vient d'ouvrir Wave, on attend que l'utilisateur revienne sur l'onglet
+// 'awaiting'   = l'utilisateur est revenu, on lui demande de confirmer le paiement
+type PaymentStep = 'initial' | 'redirected' | 'awaiting' | 'confirmed';
 
 const palette = {
   cream: '#FBF7EF',
@@ -28,6 +31,12 @@ const palette = {
   goldLight: '#D8B888',
   goldDeep: '#8C6B34',
 };
+
+// TODO: remplacer par le vrai lien marchand Wave (celui utilisé sur OREA / CVAV / Christ Army).
+// Format habituel : https://pay.wave.com/m/M_ci_XXXXXXXXXX/c/ci/
+const WAVE_MERCHANT_LINK = 'https://pay.wave.com/m/M_ci_waw-9EveeQZb/c/ci/';
+
+const PENDING_ORDER_KEY = 'sweetbox_pending_order';
 
 export const OrderPackagingModal: React.FC<OrderPackagingModalProps> = ({
   isOpen,
@@ -49,26 +58,54 @@ export const OrderPackagingModal: React.FC<OrderPackagingModalProps> = ({
   const [whatsappUrl, setWhatsappUrl] = useState<string>('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState<{ [key: string]: boolean }>({});
-  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<'initial' | 'pending' | 'confirmed'>('initial');
+  const [paymentStep, setPaymentStep] = useState<PaymentStep>('initial');
 
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Wave Deep Link URL
-  const waveDeepLink = `wave://send?phone=2250594375827&amount=${totalAmount}`;
-  const waveFallbackUrl = `https://wave.com/send?phone=2250594375827&amount=${totalAmount}`;
-
+  // Ouverture de la modale : soit on reprend un paiement en attente (sessionStorage,
+  // au cas où l'onglet a été rechargé pendant l'aller-retour vers Wave), soit on repart de zéro.
   useEffect(() => {
-    if (isOpen) {
-      setModalStep('form');
-      setAnimStage(0);
-      setFormErrors({});
-      setPaymentConfirmed(false);
-      setPaymentStep('initial');
-      setOrderId('SWB-' + Math.floor(100000 + Math.random() * 900000));
+    if (!isOpen) return;
+
+    const pending = sessionStorage.getItem(PENDING_ORDER_KEY);
+    if (pending) {
+      try {
+        const parsed = JSON.parse(pending);
+        setOrderId(parsed.orderId);
+        setDeliveryInfo(parsed.deliveryInfo);
+        setModalStep('payment');
+        setPaymentStep('awaiting');
+        return;
+      } catch {
+        sessionStorage.removeItem(PENDING_ORDER_KEY);
+      }
     }
+
+    setModalStep('form');
+    setAnimStage(0);
+    setFormErrors({});
+    setPaymentStep('initial');
+    setOrderId('SWB-' + Math.floor(100000 + Math.random() * 900000));
   }, [isOpen]);
+
+  // Détecte le retour de l'utilisateur après avoir ouvert Wave (changement d'onglet/app).
+  useEffect(() => {
+    if (paymentStep !== 'redirected') return;
+
+    const handleReturn = () => {
+      if (document.visibilityState === 'visible') {
+        setPaymentStep('awaiting');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleReturn);
+    window.addEventListener('focus', handleReturn); // fallback desktop
+    return () => {
+      document.removeEventListener('visibilitychange', handleReturn);
+      window.removeEventListener('focus', handleReturn);
+    };
+  }, [paymentStep]);
 
   const handleInputChange = (field: keyof DeliveryInfo, value: string) => {
     setDeliveryInfo((prev) => ({ ...prev, [field]: value }));
@@ -86,27 +123,24 @@ export const OrderPackagingModal: React.FC<OrderPackagingModalProps> = ({
   };
 
   const openWaveApp = () => {
-    setPaymentStep('pending');
-    // Try to open Wave app via deep link
-    window.open(waveDeepLink, '_blank');
-    
-    // Fallback: open web version if app doesn't open
-    setTimeout(() => {
-      if (paymentStep !== 'confirmed') {
-        const confirmFallback = window.confirm(
-          "L'application Wave ne s'est pas ouverte. Souhaitez-vous accéder à la version web ?"
-        );
-        if (confirmFallback) {
-          window.open(waveFallbackUrl, '_blank');
-        }
-      }
-    }, 2000);
+    // On sauvegarde l'essentiel avant de partir vers Wave, au cas où le navigateur
+    // décharge l'onglet pendant l'aller-retour (fréquent sur mobile).
+    sessionStorage.setItem(
+      PENDING_ORDER_KEY,
+      JSON.stringify({ orderId, deliveryInfo })
+    );
+    setPaymentStep('redirected');
+    window.open(`${WAVE_MERCHANT_LINK}?amount=${totalAmount}`, '_blank');
+  };
+
+  const cancelPayment = () => {
+    sessionStorage.removeItem(PENDING_ORDER_KEY);
+    setPaymentStep('initial');
   };
 
   const handlePaymentConfirmation = () => {
-    setPaymentConfirmed(true);
+    sessionStorage.removeItem(PENDING_ORDER_KEY);
     setPaymentStep('confirmed');
-    // Transition to packaging animation
     proceedToPackaging();
   };
 
@@ -135,7 +169,7 @@ export const OrderPackagingModal: React.FC<OrderPackagingModalProps> = ({
       ` *PAIEMENT WAVE :* ✅ Confirmé\n` +
       `🚕 *LIVRAISON :* Yango (frais à régler au livreur)`;
 
-    const encodedUrl = `https://wa.me/594375827?text=${encodeURIComponent(whatsappMsg)}`;
+    const encodedUrl = `https://wa.me/0594375827?text=${encodeURIComponent(whatsappMsg)}`;
     setWhatsappUrl(encodedUrl);
 
     // Start packaging animation
@@ -538,24 +572,37 @@ export const OrderPackagingModal: React.FC<OrderPackagingModalProps> = ({
                   </motion.button>
                 )}
 
-                {paymentStep === 'pending' && (
+                {paymentStep === 'redirected' && (
                   <div className="text-center space-y-3 py-4">
                     <div className="flex justify-center">
                       <div className="w-12 h-12 rounded-full border-4 border-t-transparent animate-spin"
                            style={{ borderColor: palette.gold }} />
                     </div>
-                    <p className="text-sm font-medium">En attente de confirmation...</p>
-                    <p className="text-xs opacity-50">Avez-vous effectué le paiement ?</p>
+                    <p className="text-sm font-medium">Redirection vers Wave...</p>
+                    <p className="text-xs opacity-50">Reviens sur cet onglet une fois le paiement effectué.</p>
+                    <button
+                      onClick={cancelPayment}
+                      className="text-xs font-medium underline underline-offset-2 opacity-60"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                )}
+
+                {paymentStep === 'awaiting' && (
+                  <div className="text-center space-y-3 py-4">
+                    <p className="text-sm font-medium">Avez-vous effectué le paiement Wave ?</p>
+                    <p className="text-xs opacity-50">Confirmez uniquement si le paiement a bien été validé.</p>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => setPaymentStep('initial')}
+                        onClick={cancelPayment}
                         className="flex-1 py-2 rounded-xl text-sm font-medium"
                         style={{
                           backgroundColor: isDarkMode ? `${palette.cream}08` : `${palette.chocolate}06`,
                           color: isDarkMode ? palette.cream : palette.chocolate
                         }}
                       >
-                        Annuler
+                        Pas encore
                       </button>
                       <button
                         onClick={handlePaymentConfirmation}
@@ -602,7 +649,10 @@ export const OrderPackagingModal: React.FC<OrderPackagingModalProps> = ({
 
               {/* Back button */}
               <button
-                onClick={() => setModalStep('form')}
+                onClick={() => {
+                  cancelPayment();
+                  setModalStep('form');
+                }}
                 className="w-full py-3 rounded-xl text-sm font-medium transition-colors"
                 style={{
                   backgroundColor: isDarkMode ? `${palette.cream}08` : `${palette.chocolate}06`,

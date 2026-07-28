@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-3">
           {/* Phone Badge */}
           <a
-            href="https://wa.me/594375827"
+            href="https://wa.me/0594375827"
             target="_blank"
             rel="noreferrer"
             className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider bg-emerald-600/10 border border-emerald-600/30 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-600/20 transition-colors"

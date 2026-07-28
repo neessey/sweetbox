@@ -396,7 +396,7 @@ export const SweetBoxLogo: React.FC<SweetBoxLogoProps> = ({
           <div className="flex items-center gap-2 mt-3 pt-2 border-t border-amber-900/10 dark:border-amber-100/10">
             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: goldPrimary }} />
             <a
-              href="https://wa.me/594375827"
+              href="https://wa.me/0594375827"
               target="_blank"
               rel="noreferrer"
               className="text-xs font-medium tracking-widest hover:underline flex items-center gap-1.5"
